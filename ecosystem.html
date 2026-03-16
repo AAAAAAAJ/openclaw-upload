@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw Ecosystem · 全球最大Agent生态平台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;700;900&family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050816;
+            --bg-card: #0d111c;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border-color: #1e293b;
+            --gradient-bg: linear-gradient(135deg, #050816 0%, #0a0e1f 50%, #0f172a 100%);
+            --gradient-glow-1: radial-gradient(circle at 10% 90%, #3b82f622 0%, transparent 50%);
+            --gradient-glow-2: radial-gradient(circle at 90% 10%, #8b5cf622 0%, transparent 50%);
+            --gradient-glow-3: radial-gradient(circle at 50% 50%, #ec489911 0%, transparent 70%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--gradient-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                var(--gradient-glow-1),
+                var(--gradient-glow-2),
+                var(--gradient-glow-3),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.07'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(var(--border-color) 1px, transparent 1px),
+                            linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-500 { animation-delay: 0.5s; }
+        .delay-600 { animation-delay: 0.6s; }
+        .delay-700 { animation-delay: 0.7s; }
+
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(59, 130, 246, 0.2);
+        }
+
+        h1, h2, h3, .code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        h1 {
+            font-weight: 900;
+            font-size: clamp(3.5rem, 10vw, 6rem);
+            letter-spacing: -0.05em;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-weight: 700;
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-weight: 700;
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .code {
+            background: var(--bg-card);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            color: var(--accent-green);
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 6rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero */
+        .hero {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 6rem;
+            align-items: center;
+            min-height: 80vh;
+            margin-bottom: 10rem;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 3rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .stat-card:nth-child(2) { animation-delay: 1s; }
+        .stat-card:nth-child(3) { animation-delay: 2s; }
+        .stat-card:nth-child(4) { animation-delay: 3s; }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.125rem;
+            border: none;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: var(--bg-dark);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        /* Tools Section */
+        .tools-section {
+            margin-bottom: 10rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .tool-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+        }
+
+        .tool-card.green::before {
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+        }
+
+        .tool-card.pink::before {
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+        }
+
+        .tool-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tool-features {
+            list-style: none;
+            margin-top: 1.5rem;
+        }
+
+        .tool-features li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tool-features li::before {
+            content: '▸';
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        /* Events Section */
+        .events-section {
+            margin-bottom: 10rem;
+        }
+
+        .events-timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 4rem auto 0 auto;
+        }
+
+        .events-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple));
+            transform: translateX(-50%);
+        }
+
+        .event-item {
+            position: relative;
+            margin-bottom: 4rem;
+            display: grid;
+            grid-template-columns: 1fr 40px 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .event-item:nth-child(even) .event-content {
+            order: 3;
+            text-align: left;
+        }
+
+        .event-item:nth-child(even) .event-date {
+            order: 1;
+            text-align: right;
+        }
+
+        .event-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border: 4px solid var(--bg-dark);
+            z-index: 2;
+            animation: pulse 2s infinite;
+        }
+
+        .event-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .event-date {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-green);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .event-location {
+            color: var(--accent-purple);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Community Section */
+        .community-section {
+            margin-bottom: 10rem;
+        }
+
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .community-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .community-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem auto;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 6rem 2rem;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #3b82f611, #8b5cf611);
+            border: 1px solid var(--border-color);
+            margin-bottom: 6rem;
+        }
+
+        /* Footer */
+        footer {
+            padding-top: 4rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-blue);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 4rem;
+            }
+            .events-timeline::before {
+                left: 20px;
+            }
+            .event-item {
+                grid-template-columns: 40px 1fr;
+            }
+            .event-item:nth-child(even) .event-content,
+            .event-item:nth-child(even) .event-date {
+                order: initial;
+                text-align: left;
+            }
+            .event-date {
+                grid-column: 2;
+                grid-row: 1;
+                text-align: left !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero animate-fade-in delay-100">
+            <div>
+                <span class="code">ECOSYSTEM · v2026.3</span>
+                <h1>OpenClaw<br> Ecosystem</h1>
+                <p style="font-size: 1.5rem; color: var(--text-primary); font-weight: 400;">
+                    全球最大的Agent生态系统，让AI能力触手可及
+                </p>
+                <p>
+                    一站式集成1000+官方和社区工具，覆盖AI工具集、全球线下活动、社区贡献者网络、完整的学习路径，
+                    让每一个人都能轻松构建属于自己的AI Agent。
+                </p>
+                <div class="btn-group">
+                    <a href="#tools" class="btn btn-primary hover-lift">
+                        <span>🛠️</span> 浏览工具集
+                    </a>
+                    <a href="#events" class="btn btn-secondary hover-lift">
+                        <span>🌍</span> 全球活动
+                    </a>
+                </div>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-card hover-lift">
+                    <div class="stat-number">1000+</div>
+                    <div class="stat-label">生态工具</div>
+                </div>
+                <div class="stat-card hover-lift">
+                    <div class="stat-number">37+</div>
+                    <div class="stat-label">城市覆盖</div>
+                </div>
+                <div class="stat-card hover-lift">
+                    <div class="stat-number">9M+</div>
+                    <div class="stat-label">全球用户</div>
+                </div>
+                <div class="stat-card hover-lift">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">社区支持</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tools Section -->
+        <section id="tools" class="tools-section animate-fade-in delay-200">
+            <h2>🛠️ 核心工具集</h2>
+            <p>
+                覆盖Agent开发、部署、运维全流程，从简单的自动化任务到复杂的多Agent协作系统，
+                所有工具开箱即用，无需复杂配置。
+            </p>
+            <div class="tools-grid">
+                <div class="tool-card hover-lift">
+                    <div class="tool-icon">🤖</div>
+                    <h3>Agent 开发工具链</h3>
+                    <p>完整的Agent开发工具，支持多模型适配、上下文管理、技能调用、调试测试全流程。</p>
+                    <ul class="tool-features">
+                        <li>多模型统一适配层</li>
+                        <li>可视化调试面板</li>
+                        <li>技能热更新系统</li>
+                        <li>一键打包部署</li>
+                    </ul>
+                </div>
+                <div class="tool-card green hover-lift">
+                    <div class="tool-icon">🔌</div>
+                    <h3>平台集成工具</h3>
+                    <p>支持所有主流平台原生集成，Agent可以直接操作系统、软件、网页、APP等各种资源。</p>
+                    <ul class="tool-features">
+                        <li>浏览器自动化</li>
+                        <li>系统操作API</li>
+                        <li>APP原生能力调用</li>
+                        <li>跨平台同步</li>
+                    </ul>
+                </div>
+                <div class="tool-card pink hover-lift">
+                    <div class="tool-icon">📊</div>
+                    <h3>生产力工具集</h3>
+                    <p>日常办公、内容创作、数据处理、信息检索等常用场景开箱即用的Agent模板。</p>
+                    <ul class="tool-features">
+                        <li>文档处理工具</li>
+                        <li>数据可视化</li>
+                        <li>内容生成套件</li>
+                        <li>信息聚合系统</li>
+                    </ul>
+                </div>
+                <div class="tool-card hover-lift">
+                    <div class="tool-icon">🔒</div>
+                    <h3>安全管控工具</h3>
+                    <p>细粒度权限控制、运行时行为审计、数据加密、隐私保护等企业级安全能力。</p>
+                    <ul class="tool-features">
+                        <li>权限沙箱</li>
+                        <li>行为审计日志</li>
+                        <li>端到端加密</li>
+                        <li>隐私数据脱敏</li>
+                    </ul>
+                </div>
+                <div class="tool-card green hover-lift">
+                    <div class="tool-icon">🧠</div>
+                    <h3>学习训练工具</h3>
+                    <p>自定义技能训练、知识库管理、微调工具，让Agent学习你的专属知识。</p>
+                    <ul class="tool-features">
+                        <li>知识库构建</li>
+                        <li>技能训练框架</li>
+                        <li>微调工具链</li>
+                        <li>效果评估系统</li>
+                    </ul>
+                </div>
+                <div class="tool-card pink hover-lift">
+                    <div class="tool-icon">🌐</div>
+                    <h3>多Agent协作工具</h3>
+                    <p>支持多Agent分工协作，自动分配任务、同步结果、解决复杂问题。</p>
+                    <ul class="tool-features">
+                        <li>任务自动分配</li>
+                        <li>结果同步机制</li>
+                        <li>冲突消解算法</li>
+                        <li>状态实时监控</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Section -->
+        <section id="events" class="events-section animate-fade-in delay-300">
+            <h2>🌍 全球活动</h2>
+            <p>
+                每月在全球37个城市举办线下AI切磋会，交流经验、分享案例、共同学习，完全免费开放，所有人都可以参与。
+            </p>
+            <div class="events-timeline">
+                <div class="event-item">
+                    <div class="event-date">2026.04.02</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content hover-lift">
+                        <div class="event-location">📍 北京 · 中关村</div>
+                        <h3>OpenClaw 开发者大会</h3>
+                        <p>核心团队分享最新技术进展，社区优秀案例展示，黑客松24小时开发挑战。</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-date">2026.04.09</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content hover-lift">
+                        <div class="event-location">📍 上海 · 静安区</div>
+                        <h3>AI Agent 应用实战 Workshop</h3>
+                        <p>从零开始搭建企业级Agent开发实战，从需求分析到上线部署全流程教学。</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-date">2026.04.16</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content hover-lift">
+                        <div class="event-location">📍 深圳 · 南山区</div>
+                        <h3>多Agent协作系统架构分享</h3>
+                        <p>大型企业级多Agent系统架构设计，性能优化，高可用部署实践。</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-date">2026.04.23</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content hover-lift">
+                        <div class="event-location">📍 杭州 · 余杭区</div>
+                        <h3>Agent 安全与隐私保护专题</h3>
+                        <p>企业级Agent安全部署实践，数据隐私保护，合规方案最佳实践分享。</p>
+                    </div>
+                </div>
+                <div class="event-item">
+                    <div class="event-date">2026.04.30</div>
+                    <div class="event-dot"></div>
+                    <div class="event-content hover-lift">
+                        <div class="event-location">📍 广州 · 天河区</div>
+                        <h3>AI 生态贡献者沙龙</h3>
+                        <p>社区贡献者面对面交流，核心开发者答疑， roadmap 新功能预览。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Community Section -->
+        <section class="community-section animate-fade-in delay-400">
+            <h2>🤝 社区生态</h2>
+            <p>
+                完全开放的社区生态，由全球用户共同建设，任何人都可以贡献工具、分享经验、参与开发新功能。
+            </p>
+            <div class="community-grid">
+                <div class="community-card hover-lift">
+                    <div class="community-icon">👥</div>
+                    <h3>贡献者网络</h3>
+                    <p>来自全球的1200+贡献者，共同维护和更新生态系统，每周都有新功能上线。</p>
+                </div>
+                <div class="community-card hover-lift">
+                    <div class="community-icon">📚</div>
+                    <h3>学习社区</h3>
+                    <p>完整的学习路径，从入门到精通，文档、教程、视频、案例一应俱全。</p>
+                </div>
+                <div class="community-card hover-lift">
+                    <div class="community-icon">🏆</div>
+                    <h3>赏金计划</h3>
+                    <p>贡献工具、修复Bug、分享案例都可以获得赏金奖励，贡献越多奖励越多。</p>
+                </div>
+                <div class="community-card hover-lift">
+                    <div class="community-icon">🤝</div>
+                    <h3>合作伙伴</h3>
+                    <p>与全球100+科技公司、研究机构、高校合作，共同推进Agent技术发展。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section animate-fade-in delay-500">
+            <h2 style="background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">加入OpenClaw生态</h2>
+            <p style="max-width: 800px; margin: 0 auto 2rem auto; font-size: 1.25rem;">
+                一起构建AI时代的开放生态，让每一个人都能从AI技术中受益
+            </p>
+            <div class="btn-group" style="justify-content: center;">
+                <a href="https://github.com/openclaw/openclaw" target="_blank" class="btn btn-primary hover-lift">
+                    <span>⭐</span> 立即开始使用
+                </a>
+                <a href="https://discord.com/invite/clawd" target="_blank" class="btn btn-secondary hover-lift">
+                    <span>💬</span> 加入社区
+                </a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="animate-fade-in delay-600">
+            <div class="footer-links">
+                <a href="https://github.com/openclaw/openclaw" target="_blank">GitHub</a>
+                <a href="https://docs.openclaw.ai" target="_blank">文档</a>
+                <a href="#tools">工具集</a>
+                <a href="#events">活动</a>
+                <a href="https://discord.com/invite/clawd" target="_blank">Discord</a>
+                <a href="https://twitter.com/openclaw_ai" target="_blank">Twitter</a>
+            </div>
+            <p style="font-size: 0.875rem;">
+                © 2026 OpenClaw Project · Open Source MIT License · Built with ♥ by the global community
+            </p>
+            <p style="font-size: 0.875rem;">
+                <span class="code">ecosystem.openclaw.ai</span>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 OpenClaw Ecosystem website loaded successfully!');
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // 滚动动画
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.hover-lift').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
